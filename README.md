@@ -32,11 +32,11 @@ const isHighPerformance = (await getMediaPerformanceClass()) >= 31;
 
 ### `getMediaPerformanceClass(): Promise<number>`
 
-The class from Jetpack [`PlayServicesDevicePerformance`](https://developer.android.com/reference/kotlin/androidx/core/performance/play/services/PlayServicesDevicePerformance): the class the manufacturer declared, or, for devices that don't declare one, the estimate from Google Play services. It resolves `0` when there is neither. Android 11 and earlier, iOS and web resolve `0`. On Android the promise rejects if the read fails.
+The higher of the class the device declares and the estimate from Google Play services' [`DevicePerformanceClient`](https://developers.google.com/android/reference/com/google/android/gms/deviceperformance/DevicePerformanceClient). The declared class comes from Jetpack [`DefaultDevicePerformance`](https://developer.android.com/reference/kotlin/androidx/core/performance/DefaultDevicePerformance), which also knows a few Android 11 builds that meet class `30`. It resolves `0` when there is neither. iOS and web resolve `0`. The promise never rejects.
 
-The instance is created once per process and read off the main and JS threads.
+The library asks Play services when React Native starts and stores the answer on the device together with the build fingerprint. Once Play services has answered, later launches resolve at once from the stored answer, which is refreshed in the background for the next launch. Until then (on the first launch after install, after a system update, or after a backup was restored onto another device) the call waits up to one second for Play services and then falls back to the declared class (often `0`); a late answer is still stored. If Play services never answers, every launch waits up to that second. Devices without Google Play services resolve the declared class, or an earlier stored answer, at once.
 
-Play services reports its estimate asynchronously and the library stores it on the device. The value is read once per process and then fixed. On the first launch after install, if the first call comes before Play services has answered, you get the declared value (often `0`), and the estimate shows up from the next launch. Don't treat an early `0` as permanent.
+All work runs off the main and JS threads.
 
 ## Requirements
 

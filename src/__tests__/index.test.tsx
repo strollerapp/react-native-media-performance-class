@@ -27,15 +27,4 @@ describe('getMediaPerformanceClass', () => {
     await expect(lib.getMediaPerformanceClass()).resolves.toBe(33);
     expect(getMediaPerformanceClass).toHaveBeenCalledTimes(1);
   });
-
-  it('propagates a native rejection', async () => {
-    const lib = loadWithNativeModule({
-      getMediaPerformanceClass: () =>
-        Promise.reject(new Error('play services unavailable')),
-    });
-
-    await expect(lib.getMediaPerformanceClass()).rejects.toThrow(
-      'play services unavailable'
-    );
-  });
 });

@@ -21,7 +21,7 @@ class MediaPerformanceClassPackage : BaseReactPackage() {
         name = MediaPerformanceClassModule.NAME,
         className = MediaPerformanceClassModule.NAME,
         canOverrideExistingModule = false,
-        needsEagerInit = false,
+        needsEagerInit = true,
         isCxxModule = false,
         isTurboModule = true
       )
